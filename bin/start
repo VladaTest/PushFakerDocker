@@ -1,0 +1,41 @@
+#!/bin/bash
+#tputcolors
+
+if ! [ $1 ]
+then
+    echo -e "\e[31m(!)\e[0m Container name is required. \n\tExample: ./start \e[97mname\e[0m collectd_ip db_ip provider." >&2
+    exit 1
+fi
+
+if ! [ $2 ]
+then
+    echo -e "\e[31m(!)\e[0m Collectd server IP is required. \n\tExample: ./start name \e[97mcollectd_ip\e[0m db_ip provider." >&2
+    exit 1
+fi
+
+if ! [ $3 ]
+then
+    echo -e "\e[31m(!)\e[0m DB server IP is required. \n\tExample: ./start name collectd_ip \e[97mdb_ip\e[0m provider." >&2
+    exit 1
+fi
+
+if ! [ $4 ]
+then
+    echo -e "\e[31m(!)\e[0m Database provider is required. \n\tExample: ./start name collectd_ip db_ip \e[97mprovider\e[0m." >&2
+    exit 1
+fi
+
+IMAGE="push-faker"
+CONTAINER_NAME=$1
+
+ENV="--env COLLECTD_SERVER_IP=$2 --env DB_SERVER_IP=$3 --env PROVIDER=$4"
+
+# Reset docker container
+docker stop $CONTAINER_NAME > /dev/null
+docker rm $CONTAINER_NAME > /dev/null
+
+# Start instance
+CID=$(docker run --name $CONTAINER_NAME $ENV -i -t -d $IMAGE /faker-start)
+docker inspect --format='{{.NetworkSettings.IPAddress}}' $CID
+docker attach $CONTAINER_NAME
+
