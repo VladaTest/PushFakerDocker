@@ -6,6 +6,16 @@ do
     key="$1"
     shift
     case $key in
+        --host)
+        _HOST="$1"
+        shift
+        ;;
+
+        --image)
+        _IMAGE="$1"
+        shift
+        ;;
+
         --name)
         _CONTAINER_NAME="$1"
         shift
@@ -60,6 +70,11 @@ do
     esac
 done
 
+if [ "$_HOST" ]
+then
+    _HOST="--tls -H tcp://$_HOST.cloudapp.net:4243"
+fi
+
 if [ -z "$_CONTAINER_NAME" ] ||
    [ -z "$_COLLECTD_SERVER_IP" ] ||
    [ -z "$_DB_SERVER_IP" ] ||
@@ -73,17 +88,22 @@ then
     echo -e "   \e[97m--client_attr_count\e[0m   Maxinmum number of attributes generated per client. (Default 10)" >&2
     echo -e "   \e[97m--history_x_days\e[0m      Generate history for last X days.                   (Default 7)" >&2
     echo -e "   \e[97m--history_granularity\e[0m How often data should be pushed. In seconds.        (Default 43200)" >&2
+    echo -e "   \e[97m--host\e[0m                Docker host name on Databox azure." >&2
+    echo -e "   \e[97m--image\e[0m               Docker image name." >&2
     exit 1
 fi
 
-IMAGE="push-faker"
+if [ -z "$_IMAGE" ]
+then
+    _IMAGE="push-faker"
+fi
 
 # Reset docker container
-docker stop $_CONTAINER_NAME &>/dev/null
-docker rm $_CONTAINER_NAME &>/dev/null
+docker $_HOST stop $_CONTAINER_NAME &>/dev/null
+docker $_HOST rm $_CONTAINER_NAME &>/dev/null
 
 # Start instance
-CID=$(docker run --name $_CONTAINER_NAME $_ENV -i -t -d $IMAGE /faker-start)
-docker inspect --format='{{.NetworkSettings.IPAddress}}' $CID
-docker attach $_CONTAINER_NAME
+CID=$(docker $_HOST run --name $_CONTAINER_NAME $_ENV -i -t -d $_IMAGE /faker-start)
+docker $_HOST inspect --format='{{.NetworkSettings.IPAddress}}' $CID
+docker $_HOST attach $_CONTAINER_NAME
 
