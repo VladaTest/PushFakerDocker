@@ -16,7 +16,7 @@ cd PushFakerDocker
     --provider dump
 ```
 
-You can also user optional paramethers to fine tune settings:
+You can also user optional paramethers to fine-tune settings:
 
 ```
 optional parameters:
