@@ -1,41 +1,89 @@
 #!/bin/bash
 #tputcolors
 
-if ! [ $1 ]
-then
-    echo -e "\e[31m(!)\e[0m Container name is required. \n\tExample: ./start \e[97mname\e[0m collectd_ip db_ip provider." >&2
-    exit 1
-fi
+while [[ $# > 1 ]]
+do
+    key="$1"
+    shift
+    case $key in
+        --name)
+        _CONTAINER_NAME="$1"
+        shift
+        ;;
 
-if ! [ $2 ]
-then
-    echo -e "\e[31m(!)\e[0m Collectd server IP is required. \n\tExample: ./start name \e[97mcollectd_ip\e[0m db_ip provider." >&2
-    exit 1
-fi
+        --collectd)
+        _COLLECTD_SERVER_IP="$1"
+        _ENV="--env COLLECTD_SERVER_IP=$1"
+        shift
+        ;;
 
-if ! [ $3 ]
-then
-    echo -e "\e[31m(!)\e[0m DB server IP is required. \n\tExample: ./start name collectd_ip \e[97mdb_ip\e[0m provider." >&2
-    exit 1
-fi
+        --db)
+        _DB_SERVER_IP="$1"
+        _ENV="$_ENV --env DB_SERVER_IP=$1"
+        shift
+        ;;
 
-if ! [ $4 ]
+        --provider)
+        _PROVIDER="$1"
+        _ENV="$_ENV --env PROVIDER=$1"
+        shift
+        ;;
+
+        --client_count)
+        _ENV="$_ENV --env CLIENT_COUNT=$1"
+        shift
+        ;;
+
+        --client_key_count)
+        _ENV="$_ENV --env CLIENT_KEY_COUNT=$1"
+        shift
+        ;;
+
+        --client_attr_count)
+        _ENV="$_ENV --env CLIENT_ATTR_COUNT=$1"
+        shift
+        ;;
+
+        --history_x_days)
+        _ENV="$_ENV --env HISTORY_X_DAYS=$1"
+        shift
+        ;;
+
+        --history_granularity)
+        _ENV="$_ENV --env HISTORY_GRANULARITY=$1"
+        shift
+        ;;
+
+        *)
+                # unknown option
+        ;;
+    esac
+done
+
+if [ -z "$_CONTAINER_NAME" ] ||
+   [ -z "$_COLLECTD_SERVER_IP" ] ||
+   [ -z "$_DB_SERVER_IP" ] ||
+   [ -z "$_PROVIDER" ]
 then
-    echo -e "\e[31m(!)\e[0m Database provider is required. \n\tExample: ./start name collectd_ip db_ip \e[97mprovider\e[0m." >&2
+    echo -e "\e[31mInvalid argument provided.\e[0m\n" >&2
+    echo -e "\e[97musage:\e[0m bin/start \e[31m--name\e[0m container_name \e[31m--collectd\e[0m collectd_server \e[31m--db\e[0m database_ip \e[31m--provider\e[0m provider_name\n" >&2
+    echo -e "\e[97moptional parameters:\e[0m" >&2
+    echo -e "   \e[97m--client_count\e[0m        Number of clients Faker should create.              (Default 1)" >&2
+    echo -e "   \e[97m--client_key_count\e[0m    Maxinmum number of keys generated per client.       (Default 100)" >&2
+    echo -e "   \e[97m--client_attr_count\e[0m   Maxinmum number of attributes generated per client. (Default 10)" >&2
+    echo -e "   \e[97m--history_x_days\e[0m      Generate history for last X days.                   (Default 7)" >&2
+    echo -e "   \e[97m--history_granularity\e[0m How often data should be pushed. In seconds.        (Default 43200)" >&2
     exit 1
 fi
 
 IMAGE="push-faker"
-CONTAINER_NAME=$1
-
-ENV="--env COLLECTD_SERVER_IP=$2 --env DB_SERVER_IP=$3 --env PROVIDER=$4"
 
 # Reset docker container
-docker stop $CONTAINER_NAME > /dev/null
-docker rm $CONTAINER_NAME > /dev/null
+docker stop $_CONTAINER_NAME &>/dev/null
+docker rm $_CONTAINER_NAME &>/dev/null
 
 # Start instance
-CID=$(docker run --name $CONTAINER_NAME $ENV -i -t -d $IMAGE /faker-start)
+CID=$(docker run --name $_CONTAINER_NAME $_ENV -i -t -d $IMAGE /faker-start)
 docker inspect --format='{{.NetworkSettings.IPAddress}}' $CID
-docker attach $CONTAINER_NAME
+docker attach $_CONTAINER_NAME
 
