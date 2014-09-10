@@ -1,3 +1,24 @@
-#! /bin/bash
+#!/bin/bash
 
-docker build -t push-faker .
+while [[ $# > 1 ]]
+do
+    key="$1"
+    shift
+    case $key in
+        --name)
+        _NAME="$1"
+        shift
+        ;;
+
+        *)
+                # unknown option
+        ;;
+    esac
+done
+
+if [ -z "$_NAME" ]
+then
+    _NAME="push-faker"
+fi
+
+docker build -t $_NAME .
