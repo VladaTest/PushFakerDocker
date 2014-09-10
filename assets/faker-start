@@ -6,7 +6,6 @@ sed -i "s/{DB_SERVER_IP}/$DB_SERVER_IP/g" /etc/supervisor/conf.d/PushFaker.conf
 sed -i "s/{PROVIDER}/$PROVIDER/g" /etc/supervisor/conf.d/PushFaker.conf
 
 # start the Supervisord
-# supervisord -n
 service supervisor start
 
 bash
