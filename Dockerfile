@@ -3,7 +3,7 @@ MAINTAINER vlada.petrovic+test@gmail.com
 
 RUN apt-get -y update
 RUN apt-get -y upgrade
-RUN apt-get install -y collectd supervisor git php5 curl php5-mysql
+RUN apt-get install -y collectd supervisor git php5 curl php5-mysql php5-curl
 RUN mkdir -p /var/log/supervisor
 
 ADD supervisor/ /etc/supervisor/conf.d/
