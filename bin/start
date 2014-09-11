@@ -1,6 +1,9 @@
 #!/bin/bash
 #tputcolors
 
+# Default ENV
+_ENV="--env DBS_IP=168.62.8.64 --env DBS_U=zep1 --env DBS_P=zepppelin"
+
 while [[ $# > 1 ]]
 do
     key="$1"
