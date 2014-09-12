@@ -43,7 +43,7 @@ do
         ;;
 
         --client_count)
-        _ENV="$_ENV --env CLIENT_COUNT=$1"
+        _ENV="$_ENV --env CLIENTS_COUNT=$1"
         shift
         ;;
 
