@@ -26,7 +26,7 @@ do
 
         --collectd)
         _COLLECTD_SERVER_IP="$1"
-        _ENV="--env COLLECTD_SERVER_IP=$1"
+        _ENV="$_ENV --env COLLECTD_SERVER_IP=$1"
         shift
         ;;
 

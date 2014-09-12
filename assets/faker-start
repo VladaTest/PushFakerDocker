@@ -4,6 +4,9 @@
 sed -i "s/{COLLECTD_SERVER_IP}/$COLLECTD_SERVER_IP/g" /etc/collectd/collectd.conf
 sed -i "s/{DB_SERVER_IP}/$DB_SERVER_IP/g" /etc/supervisor/conf.d/PushFaker.conf
 sed -i "s/{PROVIDER}/$PROVIDER/g" /etc/supervisor/conf.d/PushFaker.conf
+sed -i "s/{DBS_IP}/$DBS_IP/g" /etc/supervisor/conf.d/PushFaker.conf
+sed -i "s/{DBS_U}/$DBS_U/g" /etc/supervisor/conf.d/PushFaker.conf
+sed -i "s/{DBS_P}/$DBS_P/g" /etc/supervisor/conf.d/PushFaker.conf
 
 # start the Supervisord
 service supervisor start
