@@ -7,26 +7,11 @@ _ENV="--env DBS_IP=168.62.8.64 --env DBS_U=zep1 --env DBS_P=zepppelin"
 while [[ $# > 1 ]]
 do
     key="$1"
+    echo $key
     shift
     case $key in
-        --host)
-        _HOST="$1"
-        shift
-        ;;
-
-        --image)
-        _IMAGE="$1"
-        shift
-        ;;
-
         --name)
         _CONTAINER_NAME="$1"
-        shift
-        ;;
-
-        --collectd)
-        _COLLECTD_SERVER_IP="$1"
-        _ENV="$_ENV --env COLLECTD_SERVER_IP=$1"
         shift
         ;;
 
@@ -42,8 +27,18 @@ do
         shift
         ;;
 
+        --image)
+        _IMAGE="$1"
+        shift
+        ;;
+
+        --host)
+        _HOST="$1"
+        shift
+        ;;
+
         --client_count)
-        _ENV="$_ENV --env CLIENTS_COUNT=$1"
+        _ENV="$_ENV --env CLIENT_COUNT=$1"
         shift
         ;;
 
@@ -67,6 +62,11 @@ do
         shift
         ;;
 
+        --workers)
+        _ENV="$_ENV --env WORKERS=$1"
+        shift
+        ;;
+
         *)
                 # unknown option
         ;;
@@ -75,17 +75,17 @@ done
 
 if [ "$_HOST" ]
 then
-    _HOST="--tls -H tcp://$_HOST.cloudapp.net:4243"
+    _HOST=" --tls -H tcp://$_HOST.cloudapp.net:4243"
 fi
 
 if [ -z "$_CONTAINER_NAME" ] ||
-   [ -z "$_COLLECTD_SERVER_IP" ] ||
    [ -z "$_DB_SERVER_IP" ] ||
    [ -z "$_PROVIDER" ]
 then
     echo -e "\e[31mInvalid argument provided.\e[0m\n" >&2
-    echo -e "\e[97musage:\e[0m bin/start \e[31m--name\e[0m container_name \e[31m--collectd\e[0m collectd_server \e[31m--db\e[0m database_ip \e[31m--provider\e[0m provider_name\n" >&2
+    echo -e "\e[97musage:\e[0m bin/start \e[31m--name\e[0m container_name \e[31m--db\e[0m database_ip \e[31m--provider\e[0m provider_name\n" >&2
     echo -e "\e[97moptional parameters:\e[0m" >&2
+    echo -e "   \e[97m--workers\e[0m             Number of Faker workers.                            (Default 20)" >&2
     echo -e "   \e[97m--client_count\e[0m        Number of clients Faker should create.              (Default 1)" >&2
     echo -e "   \e[97m--client_key_count\e[0m    Maxinmum number of keys generated per client.       (Default 100)" >&2
     echo -e "   \e[97m--client_attr_count\e[0m   Maxinmum number of attributes generated per client. (Default 10)" >&2
@@ -109,4 +109,3 @@ docker $_HOST rm $_CONTAINER_NAME &>/dev/null
 CID=$(docker $_HOST run --name $_CONTAINER_NAME $_ENV -i -t -d $_IMAGE /faker-start)
 docker $_HOST inspect --format='{{.NetworkSettings.IPAddress}}' $CID
 docker $_HOST attach $_CONTAINER_NAME
-

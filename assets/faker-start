@@ -1,13 +1,18 @@
 #!/bin/bash
 
 # configure config files --------------------------------------------------------
-sed -i "s/{COLLECTD_SERVER_IP}/$COLLECTD_SERVER_IP/g" /etc/collectd/collectd.conf
 sed -i "s/{DB_SERVER_IP}/$DB_SERVER_IP/g" /etc/supervisor/conf.d/PushFaker.conf
 sed -i "s/{PROVIDER}/$PROVIDER/g" /etc/supervisor/conf.d/PushFaker.conf
 sed -i "s/{DBS_IP}/$DBS_IP/g" /etc/supervisor/conf.d/PushFaker.conf
 sed -i "s/{DBS_U}/$DBS_U/g" /etc/supervisor/conf.d/PushFaker.conf
 sed -i "s/{DBS_P}/$DBS_P/g" /etc/supervisor/conf.d/PushFaker.conf
-sed -i "s/{CLIENTS_COUNT}/$CLIENTS_COUNT/g" /etc/supervisor/conf.d/PushFaker.conf
+
+sed -i "s/{CLIENT_COUNT}/$CLIENT_COUNT/g" /etc/supervisor/conf.d/PushFaker.conf
+sed -i "s/{HISTORY_X_DAYS}/$HISTORY_X_DAYS/g" /etc/supervisor/conf.d/PushFaker.conf
+sed -i "s/{HISTORY_GRANULARITY}/$HISTORY_GRANULARITY/g" /etc/supervisor/conf.d/PushFaker.conf
+sed -i "s/{CLIENT_KEY_COUNT}/$CLIENT_KEY_COUNT/g" /etc/supervisor/conf.d/PushFaker.conf
+sed -i "s/{CLIENT_ATTR_COUNT}/$CLIENT_ATTR_COUNT/g" /etc/supervisor/conf.d/PushFaker.conf
+sed -i "s/{WORKERS}/$WORKERS/g" /etc/supervisor/conf.d/PushFaker.conf
 
 # start the Supervisord
 service supervisor start

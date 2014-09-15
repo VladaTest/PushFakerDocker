@@ -26,3 +26,42 @@ optional parameters:
    --history_x_days      Generate history for last X days.                   (Default 7)
    --history_granularity How often data should be pushed. In seconds.        (Default 43200)
 ```
+# Examples
+
+```
+./bin/start \
+    --name faker2 \
+    --db 2.2.2.2 \
+    --provider dump \
+    --image vladatest/push-faker \
+    --host dh002 \
+    --client_count 20 \
+    --client_key_count 200 \
+    --client_attr_count 10 \
+    --history_x_days 7 \
+    --history_granularity 3800 \
+    --workers 20
+
+
+./bin/start \
+    --name faker1 \
+    --db 2.2.2.2 \
+    --provider dump \
+    --image vladatest/push-faker \
+    --client_count 5 \
+    --history_x_days 1 \
+    --workers 10
+
+
+./bin/start \
+    --name faker2 \
+    --db 2.2.2.2 \
+    --provider dump \
+    --image vladatest/push-faker \
+    --client_count 3 \
+    --client_key_count 4 \
+    --client_attr_count 5 \
+    --history_x_days 6 \
+    --history_granularity 7 \
+    --workers 9
+```
